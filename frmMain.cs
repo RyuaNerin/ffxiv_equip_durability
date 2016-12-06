@@ -135,7 +135,7 @@ namespace ffxiv_equip_durability
                     Top = y,
                     Width = 40,
                     Height = 10,
-                    Text = "0.0 %",
+                    Text = "0.0",
                     TextAlign = ContentAlignment.MiddleCenter,
                 };
                 
@@ -219,7 +219,7 @@ namespace ffxiv_equip_durability
                 }
                 else
                 {
-                    ptr = m_proc.MainModule.BaseAddress + (this.m_isX64 ? 0x0163E690 : 0x100CDB8);
+                    ptr = m_proc.MainModule.BaseAddress + (this.m_isX64 ? 0x016FE140 : 0x100CDB8);
                     ptr = new IntPtr(BitConverter.ToInt32(NativeMethods.ReadMemory(buff, this.m_hproc, ptr, 4), 0)) + 0x60;
                     ptr = new IntPtr(BitConverter.ToInt32(NativeMethods.ReadMemory(buff, this.m_hproc, ptr, 4), 0));
                     
@@ -227,7 +227,7 @@ namespace ffxiv_equip_durability
 
                     for (i = 0; i < 13; ++i)
                     {
-                        offset = i * 0x40;
+                        offset = i * 0x38;
                         if (BitConverter.ToUInt16(buff, offset + 0x08) == 0)
                             this.SetValue(i, -1, -1);
                         else
@@ -253,8 +253,8 @@ namespace ffxiv_equip_durability
                 this.Invoke(new Action<int, int, int>(this.SetValue), index, spir, dura);
             else
             {
-                this.m_spir[index].Text = (spir == -1) ? "-" : string.Format("{0:##0.0} %", spir / 100d);
-                this.m_dura[index].Text = (dura == -1) ? "-" : string.Format("{0:##0.0} %", dura / 300d);
+                this.m_spir[index].Text = (spir == -1) ? "-" : string.Format("{0:##0.0}", Math.Floor(spir / 100d * 10) / 10);
+                this.m_dura[index].Text = (dura == -1) ? "-" : string.Format("{0:##0.0}", Math.Floor(dura / 300d * 10) / 10);
             }
         }
     }
