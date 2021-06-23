@@ -1,4 +1,4 @@
-﻿namespace ffxiv_equip_durability
+namespace ffxiv_equip_durability
 {
     partial class frmMain
     {
@@ -49,12 +49,12 @@
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(259, 100);
             this.Controls.Add(this.lblDrag);
-            this.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmMain";
-            this.Opacity = 0.5D;
+            this.Opacity = 0.75D;
             this.ShowIcon = false;
             this.Text = "eq_dura";
             this.TopMost = true;

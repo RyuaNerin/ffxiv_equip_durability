@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -90,7 +90,6 @@ namespace ffxiv_equip_durability
         readonly Label[] m_dura = new Label[13];
         readonly Label[] m_spir = new Label[13];
         Process m_proc;
-        bool m_isX64;
         IntPtr m_hproc;
         IntPtr m_hhook;
         
@@ -112,7 +111,7 @@ namespace ffxiv_equip_durability
 //             int initialStyle = NativeMethods.GetWindowLong(this.Handle, -20);
 //             NativeMethods.SetWindowLong(this.Handle, -20, initialStyle | 0x80000 | 0x20);
 
-            this.Width = 90;
+            this.Width = 130;
 
             int y = 2;
             for (int i = 0; i < m_dura.Length; ++i)
@@ -122,21 +121,21 @@ namespace ffxiv_equip_durability
                     AutoSize = false,
                     Left = 8,
                     Top = y,
-                    Width = 40,
-                    Height = 10,
+                    Width = 55,
+                    Height = 20,
                     Text = "0.0",
-                    TextAlign = ContentAlignment.MiddleCenter,
+                    TextAlign = ContentAlignment.MiddleRight,
                 };
 
                 this.m_dura[i] = new Label
                 {
                     AutoSize = false,
-                    Left = 50,
+                    Left = 70,
                     Top = y,
-                    Width = 40,
-                    Height = 10,
+                    Width = 55,
+                    Height = 20,
                     Text = "0.0",
-                    TextAlign = ContentAlignment.MiddleCenter,
+                    TextAlign = ContentAlignment.MiddleRight,
                 };
                 
                 if (i != this.m_dura.Length)
@@ -146,6 +145,8 @@ namespace ffxiv_equip_durability
                     y += 6;
                 else if (i == 7)
                     y += 6;
+
+                y += 10;
 
 
                 this.Controls.Add(this.m_dura[i]);
@@ -205,8 +206,6 @@ namespace ffxiv_equip_durability
                                             NativeMethods.WINEVENT_OUTOFCONTEXT)
                                         ));
 
-                                    this.m_isX64 = NativeMethods.IsX64(this.m_proc);
-
                                     continue;
                                 }
                             }
@@ -219,11 +218,11 @@ namespace ffxiv_equip_durability
                 }
                 else
                 {
-                    ptr = m_proc.MainModule.BaseAddress + (this.m_isX64 ? 0x016FE140 : 0x100CDB8);
-                    ptr = new IntPtr(BitConverter.ToInt32(NativeMethods.ReadMemory(buff, this.m_hproc, ptr, 4), 0)) + 0x60;
-                    ptr = new IntPtr(BitConverter.ToInt32(NativeMethods.ReadMemory(buff, this.m_hproc, ptr, 4), 0));
+                    ptr = m_proc.MainModule.BaseAddress + 0x01DAC748;
+                    ptr = new IntPtr(BitConverter.ToInt64(NativeMethods.ReadMemory(buff, this.m_hproc, ptr, 8), 0)) + 0x60;
+                    ptr = new IntPtr(BitConverter.ToInt64(NativeMethods.ReadMemory(buff, this.m_hproc, ptr, 8), 0));
                     
-                    NativeMethods.ReadMemory(buff, this.m_hproc, ptr, 0x40 * 13);
+                    NativeMethods.ReadMemory(buff, this.m_hproc, ptr, 0x38 * 13);
 
                     for (i = 0; i < 13; ++i)
                     {
@@ -253,8 +252,18 @@ namespace ffxiv_equip_durability
                 this.Invoke(new Action<int, int, int>(this.SetValue), index, spir, dura);
             else
             {
+                var dura_p = Math.Floor(dura / 300d * 10) / 10;
+
                 this.m_spir[index].Text = (spir == -1) ? "-" : string.Format("{0:##0.0}", Math.Floor(spir / 100d * 10) / 10);
-                this.m_dura[index].Text = (dura == -1) ? "-" : string.Format("{0:##0.0}", Math.Floor(dura / 300d * 10) / 10);
+                this.m_dura[index].Text = (dura == -1) ? "-" : string.Format("{0:##0.0}", dura_p);
+
+                if (dura < 10)
+                {
+                    this.m_dura[index].ForeColor = Color.Red;
+                } else
+                {
+                    this.m_dura[index].ForeColor = SystemColors.ControlText;
+                }
             }
         }
     }
